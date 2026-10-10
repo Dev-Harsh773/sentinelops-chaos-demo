@@ -18,7 +18,7 @@ async def dispatch_telemetry(
     metadata: Optional[Dict[str, Any]] = None,
 ) -> bool:
     """Dispatches generic telemetry payload to configured SentinelOps ingest URL.
-    
+
     Uses X-Sentinel-Secret authentication header and catches exceptions to prevent
     app disruptions if SentinelOps is unreachable.
     """

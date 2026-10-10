@@ -14,7 +14,7 @@ router = APIRouter(prefix="/orders", tags=["Orders"])
 @router.post("", response_model=Order, status_code=status.HTTP_201_CREATED)
 async def create_order(payload: OrderCreate):
     """Creates a new order.
-    
+
     If order processing failure is simulated, raises OrderProcessingError.
     On success, deducts stock and returns HTTP 201 Created.
     """

@@ -56,7 +56,7 @@ async def root():
 @app.exception_handler(OrderProcessingError)
 async def handle_order_processing_error(request: Request, exc: OrderProcessingError):
     """Custom exception handler for simulated order processing chaos.
-    
+
     Generates a full stack trace, dispatches telemetry asynchronously to
     SentinelOps in the background, and returns an HTTP 500 response.
     """

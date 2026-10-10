@@ -10,7 +10,7 @@ router = APIRouter(tags=["Health"])
 @router.get("/health")
 async def health_check(response: Response):
     """Health check endpoint.
-    
+
     Returns HTTP 200 when healthy.
     Returns HTTP 503 when health outage failure is toggled on.
     """
