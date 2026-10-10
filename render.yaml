@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: sentinelops-chaos-demo
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: SENTINELOPS_WEBHOOK_URL
+        sync: false
+      - key: SENTINELOPS_WEBHOOK_SECRET
+        sync: false
+      - key: CHAOS_ADMIN_TOKEN
+        generateValue: true
