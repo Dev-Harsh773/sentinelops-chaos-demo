@@ -16,6 +16,9 @@ async def dispatch_telemetry(
     exception_type: Optional[str] = None,
     traceback: Optional[str] = None,
     metadata: Optional[Dict[str, Any]] = None,
+    endpoint: Optional[str] = None,
+    status_code: Optional[int] = None,
+    request_id: Optional[str] = None,
 ) -> bool:
     """Dispatches generic telemetry payload to configured SentinelOps ingest URL.
 
@@ -38,6 +41,9 @@ async def dispatch_telemetry(
         payload["exception_type"] = exception_type
     if traceback:
         payload["traceback"] = traceback
+    for key, value in (("endpoint", endpoint), ("status_code", status_code), ("request_id", request_id)):
+        if value is not None:
+            payload[key] = value
 
     headers = {"Content-Type": "application/json"}
     if settings.SENTINELOPS_WEBHOOK_SECRET:

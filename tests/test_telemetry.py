@@ -35,6 +35,7 @@ async def test_dispatch_telemetry_success():
             exception_type="OrderProcessingError",
             traceback="Traceback...",
             metadata={"product_id": "prod-1"},
+            endpoint="/orders", status_code=500, request_id="request-test",
         )
 
         assert success is True
@@ -46,6 +47,10 @@ async def test_dispatch_telemetry_success():
         assert kwargs["json"]["level"] == "ERROR"
         assert kwargs["json"]["event_type"] == "order.processing.failed"
         assert kwargs["json"]["exception_type"] == "OrderProcessingError"
+        assert kwargs["json"]["endpoint"] == "/orders"
+        assert kwargs["json"]["status_code"] == 500
+        assert kwargs["json"]["request_id"] == "request-test"
+        assert kwargs["json"]["traceback"] == "Traceback..."
 
 
 @pytest.mark.asyncio
@@ -78,3 +83,7 @@ def test_order_processing_error_invokes_telemetry_dispatch():
         call_kwargs = mock_dispatch.call_args.kwargs
         assert call_kwargs["event_type"] == "order.processing.failed"
         assert call_kwargs["exception_type"] == "OrderProcessingError"
+        assert call_kwargs["endpoint"] == "/orders"
+        assert call_kwargs["status_code"] == 500
+        assert call_kwargs["request_id"] == response.headers["X-Request-ID"]
+        assert "create_order" in call_kwargs["traceback"]

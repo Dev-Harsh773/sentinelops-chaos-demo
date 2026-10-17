@@ -4,6 +4,7 @@ import asyncio
 from contextlib import asynccontextmanager
 import logging
 import traceback
+import uuid
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from app.api import admin, health, orders, products
@@ -61,6 +62,7 @@ async def handle_order_processing_error(request: Request, exc: OrderProcessingEr
     SentinelOps in the background, and returns an HTTP 500 response.
     """
     tb_str = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+    request_id = str(uuid.uuid4())
     logger.error("OrderProcessingError triggered: %s", exc.message)
 
     # Dispatch non-blocking background telemetry to SentinelOps connector
@@ -72,6 +74,9 @@ async def handle_order_processing_error(request: Request, exc: OrderProcessingEr
             message=f"Order checkout failed: {exc.message}",
             exception_type="OrderProcessingError",
             traceback=tb_str,
+            endpoint=request.url.path,
+            status_code=500,
+            request_id=request_id,
             metadata={"error": exc.message, "path": str(request.url.path)},
         )
     )
@@ -79,4 +84,5 @@ async def handle_order_processing_error(request: Request, exc: OrderProcessingEr
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={"detail": f"Order processing failed: {exc.message}"},
+        headers={"X-Request-ID": request_id},
     )
